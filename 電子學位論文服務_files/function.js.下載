@@ -1,0 +1,3 @@
+//取消IE虛線框
+function HFocus() { var obj=event.srcElement;
+while(obj) { if(obj.nodeName=="A"||obj.nodeName=="input") obj.hideFocus=true; obj=obj.parentNode;}}

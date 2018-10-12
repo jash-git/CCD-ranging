@@ -1,0 +1,203 @@
+.func {
+	font-size: 13px;
+}
+.func a{
+	color:#666666;
+	text-decoration: none;
+}
+.func a:hover{
+	color:#FF6600;
+	text-decoration: none;
+}
+.hot-news {
+	font-size: 13px;
+	line-height: 18px;
+	padding-top: 5px;
+	padding-left: 3px;
+	color: #666666;
+}
+.hot-news a{
+	color:#003471;
+	text-decoration: none;
+}
+.hot-news a:hover{
+	color:#F26522;
+    text-decoration: underline;
+}
+.course {
+	font-size: 13px;
+	line-height: 18px;
+	padding-top: 4px;
+}
+.course a{
+	color:#0066CC;
+	text-decoration: underline;
+}
+.course a:hover{
+	color:#0066CC;
+	text-decoration: none;
+}
+.course-detail {
+	font-size: 13px;
+	line-height: 18px;
+    margin: 2px 10px 2px 13px;
+}
+.course-detail a{
+	color:#003399;
+	text-decoration: underline;
+}
+.course-detail a:hover{
+	color:#0066CC;
+	text-decoration: none;
+}
+.course-tableList {
+	font-size: 13px;
+	line-height: 18px;
+	color: #333333;
+	background-color: #C5C5C5;
+	height: 24px;
+	padding: 3px 5px 0px 5px;
+}
+.course-tableList a{
+	color: #0066CC;
+	text-decoration: underline;
+}
+.course-tableList a:hover{
+	text-decoration: none;
+}
+.school {
+	font-size: 13px;
+	line-height: 18px;
+	padding-top: 4px;
+}
+.school a{
+	color:#485966;
+	text-decoration: underline;
+}
+.school a:hover{
+	color:#42969D;
+	text-decoration: none;
+}
+.school-detail {
+	font-size: 13px;
+	line-height: 18px;
+	margin: 2px 10px 2px 13px;
+}
+.school-detail a{
+	color:#4B6466;
+	text-decoration: underline;
+}
+.school-detail a:hover{
+	color:#2D8A00;
+	text-decoration: none;
+}
+.etds-btn {
+	font-size: 13px;
+	padding-top: 1px;
+	padding-bottom: 4px;
+	height: 22px;
+	text-align: center;
+}
+.etds-input {
+	font-size: 13px;
+	line-height: 18px;
+}
+.login {
+	font-size: 12px;
+	color: #FFFFFF;
+	line-height: 22px;
+}
+.login a{
+	color: #FFFFAC;
+	text-decoration: none;
+}
+.login a:hover{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.cpr {
+	font-size: 13px;
+	line-height: 18px;
+	color: #494949;
+	padding-top: 3px;
+	font-family: "Arial", "Helvetica", "sans-serif", "新細明體";
+}
+.left-menu {
+	font-family: "Arial", "Helvetica", "sans-serif", "新細明體";
+	font-size: 13px;
+}
+.left-menu a{
+	color: #263F68;
+	text-decoration: underline;
+}
+.left-menu a:hover{
+	color: #BD2D33;
+	text-decoration: underline;
+}
+.bodyspace {
+	padding-right: 40px;
+	padding-left: 40px;
+}
+.linkList {
+	font-size: 13px;
+	color: #3366CC;
+line-height: 22px;
+
+}
+.linkList a{
+	color: #3366CC;
+	text-decoration: underline;
+}
+.linkList a:hover{
+	color: #FF9900;
+	text-decoration: underline;
+}
+.content-txt {
+	font-size: 13px;
+	line-height: 18px;
+	color: #333333;
+}
+.content-title {
+	color: #0066CC;
+	font-weight: bold;
+}
+.school-tableList {
+	font-size: 13px;
+	line-height: 18px;
+	color: #333333;
+	background-color: #8C8C8C;
+	height: 24px;
+	padding: 3px 5px 0px 5px;
+}
+.school-tableList a{
+	color: #003399;
+	text-decoration: underline;
+}
+.school-tableList a:hover{
+	text-decoration: none;
+}
+.page {
+	color: #000000;
+	font-size: 12px;
+	letter-spacing: 2px;
+}
+.page a{
+	color: #666666;
+	text-decoration: underline;
+}
+.page a:hover{
+	color: #000000;
+	text-decoration: none;
+}
+.tableDesc {
+	font-size: 13px;
+	color: #666666;
+	line-height: 22px;
+}
+.tableDesc a{
+	color: #FF0000;
+	text-decoration: underline;
+}
+.tableDesc a:hover{
+	text-decoration: none;
+}

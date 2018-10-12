@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0044)https://etds.stu.edu.tw/etdservice/searching -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script language="JavaScript" type="text/JavaScript" src="./電子學位論文服務_files/function.js.下載"></script>
+<script language="JavaScript" type="text/JavaScript" src="./電子學位論文服務_files/loadImages.js.下載"></script>
+<script language="JavaScript"> 
+function selectall()
+{
+   var i;
+   for(i=0;i<document.list_form.length;i++)
+       document.list_form.elements[i].checked ="true"; 
+}
+
+function clearall()
+{
+   var i;
+   for(i=0;i<document.list_form.length;i++)
+       document.list_form.elements[i].checked =""; 
+}
+
+function check(action_page, start, query_str)
+{
+   var i, num=0;
+   var str = "";
+   var list = "";
+   var tmp = "";
+
+   for(i=0;i<document.list_form.length;i++)
+   {
+       if(document.list_form.elements[i].checked == true) 
+       {
+           num++;
+           str = str+"&etdun"+num+"="+document.list_form.elements[i].value; 
+	   list = list + (start+i)+"、";
+       }
+   }
+   str = str+"&n="+num+"&list="+list;
+   location=action_page+"?"+str+query_str; 
+}
+</script>
+<title>電子學位論文服務</title>
+<link href="./電子學位論文服務_files/etds.css" rel="stylesheet" type="text/css">
+</head>
+
+<body bgcolor="#e4e4ec" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="MM_preloadImages(&#39;/images/icon_02_over.gif&#39;,&#39;/images/icon_01_over.gif&#39;,&#39;/images/e1_09.gif&#39;)" onmousedown="HFocus();">
+<table width="750" border="0" align="center" cellpadding="0" cellspacing="0">
+ <tbody><tr> 
+  <td><img src="./電子學位論文服務_files/banner_U0084.jpg" width="750" height="64"></td>
+ </tr>
+</tbody></table>
+<table width="750" border="0" align="center" cellpadding="0" cellspacing="0"><tbody><tr> <td width="209"><img src="./電子學位論文服務_files/e0_02.gif" width="162" height="24"></td><td width="98"><a href="https://etds.stu.edu.tw/main/index" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;menu01&#39;,&#39;&#39;,&#39;/images/e2_03.gif&#39;,1)"><img src="./電子學位論文服務_files/e0_03.gif" name="menu01" width="62" height="24" border="0"></a></td><td width="696"><img src="./電子學位論文服務_files/e0_05.gif" width="530" height="24"></td></tr></tbody></table>
+<table width="751" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tbody><tr>
+    <td width="162" height="43"><img src="./電子學位論文服務_files/e0_06.gif" width="162" height="43"></td>
+    <td width="281" valign="bottom" background="./電子學位論文服務_files/e0_07.gif">
+    <form name="form3" method="post" action="https://etds.stu.edu.tw/etdservice/searching">
+      <table width="243" height="20" border="0" align="center" cellpadding="0" cellspacing="0">
+       <tbody><tr>
+          <td width="171" class="etds-input">
+            <input name="query_word1" type="text" size="15">
+            <input name="Submit3" type="submit" class="etds-btn" value="查詢" onfocus="this.blur();"></td>
+          <td width="72" class="hot-news"><a href="https://etds.stu.edu.tw/etdservice/searchform">進階搜尋</a></td>
+        </tr>
+	
+    </tbody></table>
+    </form></td>
+    <td width="187"><img src="./電子學位論文服務_files/e0_08.gif" width="187" height="43"></td>
+    <td width="93">
+      <table width="93" border="0" cellpadding="0" cellspacing="0">
+        <tbody><tr>
+          <td width="93"><img src="./電子學位論文服務_files/e0_09_1.gif" name="Image11" width="93" height="27" border="0"><!--<a href="#" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image11','','/images/e1_09.gif',1)"><img src="/images/e0_09.gif" name="Image11" width="93" height="27" border="0"></a>--></td>
+        </tr>
+        <tr>
+          <td><img src="./電子學位論文服務_files/e0_11.gif" width="93" height="16"></td>
+        </tr>
+    </tbody></table></td>
+    <td width="27"><img src="./電子學位論文服務_files/e0_10.gif" width="27" height="43"></td>
+  </tr>
+</tbody></table>
+<table width="750" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+ <tbody><tr> 
+  <td width="992" valign="top" class="bodyspace"><br> <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tbody><tr> 
+     <td background="./電子學位論文服務_files/title_bg.gif"><img src="./電子學位論文服務_files/title_05.gif" width="150" height="24"></td>
+    </tr>
+   </tbody></table>
+   <br> <table width="100%" border="0" cellspacing="0" cellpadding="0">
+   <!--
+     <tr>
+      <td class="tableDesc">說明：<img src="/images/contentb1.jpg" align="absMiddle">可連結全文</td>
+    </tr>
+    -->
+    <tbody><tr>
+     <td><font color="#CCCCCC">--------------------------------------------------------------------------------------------------------------------------------</font></td>
+    </tr>
+   </tbody></table>
+   
+   <form name="sort_form" method="post" action="https://etds.stu.edu.tw/etdservice/searching">
+   <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0" class="tableDesc">
+     <tbody><tr> 
+      <td width="60%">查到「<font color="#000000">車距偵測&nbsp;</font>」相關論文共1筆 <br>目前顯示第 1 - 1 筆 </td>
+      <td width="40%" align="right">
+      <select name="sort">
+        
+	<option value="a_year">依學年度</option>
+	
+	<option value="school_c">依校院</option>
+	
+	<option value="department_c">依研究所</option>
+	
+	<option value="name_c">依研究生</option>
+	
+       </select>
+       <input type="submit" value="排序" name="sort_submit">
+       </td>
+     </tr>
+   </tbody></table>
+    <input type="hidden" name="query_word1" value="車距偵測">
+
+   </form>
+   <form name="list_form" method="post" action="https://etds.stu.edu.tw/etdservice/searching">
+   
+   <table width="95%" border="0" align="center" cellpadding="5" cellspacing="1" class="school-tableList">
+     <tbody><tr align="center" bgcolor="#DCD7C7"> 
+      <td width="7%">選取</td>
+      <td width="7%">序號</td>
+      <td width="14%" bgcolor="#DCD7C7">研究生</td>
+      <td width="72%" bgcolor="#DCD7C7">論文名稱 / 校院名稱 / 系所名稱 / 學年度 / 學位類別 / 
+       頁數</td>
+     </tr>
+     
+     <tr bgcolor="#FFFFFF"> 
+      <td align="center"><input type="checkbox" name="c1" value="U0084-1406201123562100" onfocus="this.blur();"></td>
+      <td align="center">1</td>
+      <td align="center">陳睿紳</td>
+      <td><a href="https://etds.stu.edu.tw/etdservice/view_metadata?etdun=U0084-1406201123562100&amp;query_field1=&amp;&amp;query_word1=%E8%BB%8A%E8%B7%9D%E5%81%B5%E6%B8%AC&amp;">應用單一光學鏡頭於多部車輛車距偵測之研究</a><img src="./電子學位論文服務_files/contentb1.jpg"><br>
+       樹德科技大學/資訊學院/資訊工程系碩士班/99/碩士/50頁</td>
+     </tr>
+     
+   </tbody></table>
+   <table width="95%" height="25" border="0" align="center" cellpadding="0" cellspacing="0" class="func">
+    <tbody><tr>
+     <td valign="bottom"><img src="./電子學位論文服務_files/a1.gif" width="10" height="12" align="absmiddle"> <a href="javascript:selectall()">選擇全部</a>　<img src="./電子學位論文服務_files/a1.gif" width="10" height="12" align="absmiddle"> <a href="javascript:clearall()">清除註記</a></td>
+    </tr>
+   </tbody></table>
+   <table width="95%" height="35" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tbody><tr>
+     <td valign="bottom"><a href="javascript:check(&#39;simple&#39;, 1, &#39;&amp;query_field1=&amp;&amp;query_word1=車距偵測&amp;&amp;start=1&amp;end=1&#39;)" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image12&#39;,&#39;&#39;,&#39;/images/icon_01_over.gif&#39;,1)"><img src="./電子學位論文服務_files/icon_01.gif" name="Image12" width="82" height="20" border="0"></a>　<a href="javascript:check(&#39;detail&#39;, 1, &#39;&amp;query_field1=&amp;&amp;query_word1=車距偵測&amp;&amp;start=1&amp;end=1&#39;)" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image11&#39;,&#39;&#39;,&#39;/images/icon_02_over.gif&#39;,1)"><img src="./電子學位論文服務_files/icon_02.gif" name="Image11" width="82" height="20" border="0"></a></td>
+    </tr>
+   </tbody></table>
+   </form>
+   <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0" class="page">
+    <tbody><tr>
+     <td align="center">
+     
+     </td>
+    </tr>
+   </tbody></table>
+   
+   
+   <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tbody><tr> 
+     <td><font color="#CCCCCC">--------------------------------------------------------------------------------------------------------------------------------</font></td>
+    </tr>
+   </tbody></table>
+   <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <form name="form3" method="post" action="https://etds.stu.edu.tw/etdservice/searching"></form>
+     <tbody><tr> 
+      <td align="center"> <input name="query_word1" type="text" class="etds-input" size="20"> 
+       <input name="Submit2" type="submit" class="etds-btn" value="查詢" onfocus="this.blur();"> 
+       <span class="hot-news"><a href="https://etds.stu.edu.tw/etdservice/searchform">進階查詢 </a></span></td>
+     </tr>
+    
+   </tbody></table>
+   <br>
+   <hr width="100%" size="1" noshade=""> 
+   <!--
+   <table width="448" height="28" border="0" align="center" cellpadding="0" cellspacing="5" class="func">
+    <tr> 
+      <td width="107"><div align="center"><a href="#">連絡我們</a></div></td>
+     <td width="105"><div align="center"><a href="#">著作權聲明</a></div></td>
+     <td width="113"><div align="center"><a href="#">隱私權聲明</a></div></td>
+     <td width="98"><div align="center"><a href="#">關於華藝</a></div></td>
+    </tr>
+   </table>
+   -->
+   </td>
+  <td width="27" valign="top" background="./電子學位論文服務_files/etd_20.gif"> <img src="./電子學位論文服務_files/etd_10.gif" width="27" height="211"></td>
+ </tr>
+</tbody></table>
+<table width="750" border="0" align="center" cellpadding="0" cellspacing="0">
+ <tbody><tr> 
+    <td width="976" height="50" bgcolor="#DBD5C6"> 
+      <div align="center" class="cpr">如您有疑問，請與我們聯絡<br> 審核問題辦理：請洽各系系助<br>  圖書館資料修正：圖書館採編組組員&nbsp; 林彥儀&nbsp;  電話：(07)6158000 轉2307&nbsp;  電子郵件：<a href="mailto:pat3288@stu.edu.tw">pat3288@stu.edu.tw</a><br> 系統問題處理：圖書館採編組組長&nbsp; 蘇雅屏&nbsp;  電話：(07) 6158000 轉2301&nbsp;  電子郵件：<a href="mailto:sqavb@stu.edu.tw">sqavb@stu.edu.tw</a> </div></td>
+  <td width="27" background="./電子學位論文服務_files/etd_20.gif"><img src="./電子學位論文服務_files/etd_20.gif" width="27" height="19"></td>
+ </tr>
+</tbody></table>
+
+
+</body></html>
