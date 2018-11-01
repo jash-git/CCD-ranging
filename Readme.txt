@@ -26,6 +26,7 @@ GITHUB完整備份: https://github.com/jash-git/CCD-ranging
 		參01.PFF
 	雙CCD 視差法
 		參02.PFF
+		參02-1.PFF
 	散焦測距法
 		參03.PFF
 	IBDMS 平行量測法
