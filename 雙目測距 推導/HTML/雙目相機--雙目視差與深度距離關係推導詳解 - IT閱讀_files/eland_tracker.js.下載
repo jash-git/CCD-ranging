@@ -1,0 +1,2 @@
+var sNew=document.createElement("script"),blackList=["chinatimes","www.funtime.com.tw"],domain=document.domain;blackList.forEach(function(a){-1!==domain.indexOf(a)&&sessionStorage.setItem("usefp","0")});sNew.src="//dmp.eland-tech.com/dmpreceiver/el_load.min.js";var s0=document.getElementsByTagName("script")[0];s0.parentNode.insertBefore(sNew,s0);var ElandTracker=ElandTracker||{},count=0;
+ElandTracker.Track=function(a){"undefined"===typeof ElandTracker.isAllReady?50<count||(count++,setTimeout(ElandTracker.Track,100,a)):ElandTracker.startTrack(a)};

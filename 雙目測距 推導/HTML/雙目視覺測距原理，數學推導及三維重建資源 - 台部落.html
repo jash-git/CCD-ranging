@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://www.twblogs.net/a/5b8b442e2b717718832e6baa -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="google-site-verification" content="QSl8rlXGYak0SPdlX0r_tMqD7I6XFuWD1JxR_D9PbyM">
+<meta name="msvalidate.01" content="4775F105590951C69208A1E849EF0F32">
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>雙目視覺測距原理，數學推導及三維重建資源 - 台部落</title>
+<meta name="description" content="
+轉載自：https://blog.csdn.net/piaoxuezhong/article/details/79016615
+先說一下單/雙目的測距原理區別：
+單目測距原理：
+先通過圖像匹配進行目標識別（各種車型、行人、物體等），再通過">
+<link rel="dns-prefetch preconnect" href="https://www.google-analytics.com/">
+<link rel="dns-prefetch preconnect" href="https://pagead2.googlesyndication.com/">
+<link rel="dns-prefetch preconnect" href="https://googleads.g.doubleclick.net/">
+<link rel="dns-prefetch preconnect" href="https://www.googletagmanager.com/">
+<link rel="shortcut icon" type="image/png" href="https://www.twblogs.net/static/images/favicon.ico">
+<link rel="stylesheet" type="text/css" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/fontello.css">
+<link rel="stylesheet" type="text/css" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/bootstrap.min.css">
+<script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(5).txt"></script><script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/osd.js.下載"></script><script async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/async-ads.js.下載"></script><script async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/async-ads.js.下載"></script><script type="text/javascript" async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/analytics.js.下載"></script><script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(6).txt"></script><script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(7).txt" id="google_shimpl"></script><script type="text/javascript" async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(8).txt"></script><script async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/gtm.js.下載"></script><script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/jquery-3.3.1.min.js.下載"></script>
+<script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/lozad.min.js.下載"></script>
+<script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/js.cookie.min.js.下載"></script>
+<script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/common.js.下載"></script>
+<script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/bootstrap.min.js.下載"></script>
+<link rel="stylesheet" type="text/css" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/header.css">
+<link rel="stylesheet" type="text/css" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/main.css">
+<script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/main.js.下載"></script>
+<script async="" type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/login.js.下載"></script>
+<script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/highlight.pack.js.下載"></script>
+<link rel="stylesheet" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/default.css">
+<link rel="alternate" hreflang="zh-Hant" href="https://www.twblogs.net/a/5b8b442e2b717718832e6baa">
+<link rel="alternate" hreflang="zh-Hans" href="https://www.twblogs.net/a/5b8b442e2b717718832e6baa/?lang=zh-cn">
+
+<script async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/js"></script>
+<script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-135472877-1');
+    </script>
+<script async="" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(9).txt"></script>
+
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WV8L3BL');</script>
+
+<script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/article.js.下載"></script>
+
+<script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/cse_element__zh_tw.js.下載" type="text/javascript"></script><link type="text/css" rel="stylesheet" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/default+zh_TW.css"><link type="text/css" rel="stylesheet" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/default(1).css"><style type="text/css">.gsc-control-cse{font-family:helvetica neue, arial, sans-serif}.gsc-control-cse .gsc-table-result{font-family:helvetica neue, arial, sans-serif}.gsc-refinementsGradient{background:linear-gradient(to left,rgba(255,255,255,1),rgba(255,255,255,0))}.gsc-control-cse{border-color:#FFFFFF;background-color:#FFFFFF}input.gsc-input,.gsc-input-box,.gsc-input-box-hover,.gsc-input-box-focus{border-color:#FD484D}.gsc-search-button-v2,.gsc-search-button-v2:hover,.gsc-search-button-v2:focus{border-color:#FD484D;background-color:#FD484D;background-image:none;filter:none}.gsc-search-button-v2 svg{fill:#FFFFFF}.gsc-tabHeader.gsc-tabhActive,.gsc-refinementHeader.gsc-refinementhActive{color:#CCCCCC;border-color:#CCCCCC;background-color:#FFFFFF}.gsc-tabHeader.gsc-tabhInactive,.gsc-refinementHeader.gsc-refinementhInactive{color:#CCCCCC;border-color:#CCCCCC;background-color:#FFFFFF}.gsc-webResult.gsc-result,.gsc-results .gsc-imageResult{border-color:#FFFFFF;background-color:#FFFFFF}.gsc-webResult.gsc-result:hover{border-color:#FFFFFF;background-color:#FAFAFA}.gs-webResult.gs-result a.gs-title:link,.gs-webResult.gs-result a.gs-title:link b,.gs-imageResult a.gs-title:link,.gs-imageResult a.gs-title:link b{color:#0000CC}.gs-webResult.gs-result a.gs-title:visited,.gs-webResult.gs-result a.gs-title:visited b,.gs-imageResult a.gs-title:visited,.gs-imageResult a.gs-title:visited b{color:#741B47}.gs-webResult.gs-result a.gs-title:hover,.gs-webResult.gs-result a.gs-title:hover b,.gs-imageResult a.gs-title:hover,.gs-imageResult a.gs-title:hover b{color:#FD484D}.gs-webResult.gs-result a.gs-title:active,.gs-webResult.gs-result a.gs-title:active b,.gs-imageResult a.gs-title:active,.gs-imageResult a.gs-title:active b{color:#0000CC}.gsc-cursor-page{color:#0000CC}a.gsc-trailing-more-results:link{color:#0000CC}.gs-webResult .gs-snippet,.gs-fileFormatType{color:#000000}.gs-webResult div.gs-visibleUrl{color:#999999}.gs-webResult div.gs-visibleUrl-short{color:#999999}.gs-webResult div.gs-visibleUrl-short{display:none}.gs-webResult div.gs-visibleUrl-long{display:block}.gs-promotion div.gs-visibleUrl-short{display:none}.gs-promotion div.gs-visibleUrl-long{display:block}.gsc-cursor-box{border-color:#FFFFFF}.gsc-results .gsc-cursor-box .gsc-cursor-page{border-color:#CCCCCC;background-color:#FFFFFF;color:#CCCCCC}.gsc-results .gsc-cursor-box .gsc-cursor-current-page{border-color:#CCCCCC;background-color:#FFFFFF;color:#CCCCCC}.gsc-webResult.gsc-result.gsc-promotion{border-color:#336699;background-color:#FFFFFF}.gsc-completion-title{color:#0000CC}.gsc-completion-snippet{color:#000000}.gs-promotion a.gs-title:link,.gs-promotion a.gs-title:link *,.gs-promotion .gs-snippet a:link{color:#0000CC}.gs-promotion a.gs-title:visited,.gs-promotion a.gs-title:visited *,.gs-promotion .gs-snippet a:visited{color:#0000CC}.gs-promotion a.gs-title:hover,.gs-promotion a.gs-title:hover *,.gs-promotion .gs-snippet a:hover{color:#0000CC}.gs-promotion a.gs-title:active,.gs-promotion a.gs-title:active *,.gs-promotion .gs-snippet a:active{color:#0000CC}.gs-promotion .gs-snippet,.gs-promotion .gs-title .gs-promotion-title-right,.gs-promotion .gs-title .gs-promotion-title-right *{color:#000000}.gs-promotion .gs-visibleUrl,.gs-promotion .gs-visibleUrl-short{color:#008000}.gcsc-find-more-on-google{color:#0000CC}.gcsc-find-more-on-google-magnifier{fill:#0000CC}</style><style type="text/css">.gscb_a{display:inline-block;font:27px/13px arial,sans-serif}.gsst_a .gscb_a{color:#a1b9ed;cursor:pointer}.gsst_a:hover .gscb_a,.gsst_a:focus .gscb_a{color:#36c}.gsst_a{display:inline-block}.gsst_a{cursor:pointer;padding:0 4px}.gsst_a:hover{text-decoration:none!important}.gsst_b{font-size:16px;padding:0 2px;position:relative;user-select:none;-webkit-user-select:none;white-space:nowrap}.gsst_e{vertical-align:middle;opacity:0.55;}.gsst_a:hover .gsst_e,.gsst_a:focus .gsst_e{opacity:0.72;}.gsst_a:active .gsst_e{opacity:1;}.gsst_f{background:white;text-align:left}.gsst_g{background-color:white;border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);margin:-1px -3px;padding:0 6px}.gsst_h{background-color:white;height:1px;margin-bottom:-1px;position:relative;top:-1px}.gsib_a{width:100%;padding:4px 6px 0}.gsib_a,.gsib_b{vertical-align:top}.gssb_c{border:0;position:absolute;z-index:989}.gssb_e{border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);cursor:default}.gssb_f{visibility:hidden;white-space:nowrap}.gssb_k{border:0;display:block;position:absolute;top:0;z-index:988}.gsdd_a{border:none!important}.gsq_a{padding:0}.gssb_a{padding:0 7px}.gssb_a,.gssb_a td{white-space:nowrap;overflow:hidden;line-height:22px}#gssb_b{font-size:11px;color:#36c;text-decoration:none}#gssb_b:hover{font-size:11px;color:#36c;text-decoration:underline}.gssb_g{text-align:center;padding:8px 0 7px;position:relative}.gssb_h{font-size:15px;height:28px;margin:0.2em;-webkit-appearance:button}.gssb_i{background:#eee}.gss_ifl{visibility:hidden;padding-left:5px}.gssb_i .gss_ifl{visibility:visible}a.gssb_j{font-size:13px;color:#36c;text-decoration:none;line-height:100%}a.gssb_j:hover{text-decoration:underline}.gssb_l{height:1px;background-color:#e5e5e5}.gssb_m{color:#000;background:#fff}.gssb_a{padding:0 9px}.gsib_a{padding:5px 9px 4px 9px}.gscb_a{line-height:27px}.gssb_e{border:0}.gssb_l{margin:5px 0}input.gsc-input::-webkit-input-placeholder{font-size:14px}input.gsc-input:-moz-placeholder{font-size:14px}input.gsc-input::-moz-placeholder{font-size:14px}input.gsc-input:-ms-input-placeholder{font-size:14px}input.gsc-input:focus::-webkit-input-placeholder{color:transparent}input.gsc-input:focus:-moz-placeholder{color:transparent}input.gsc-input:focus::-moz-placeholder{color:transparent}input.gsc-input:focus:-ms-input-placeholder{color:transparent}.gssb_c .gsc-completion-container{position:static}.gssb_c{z-index:5000}.gsc-completion-container table{background:transparent;font-size:inherit;font-family:inherit}.gssb_c > tbody > tr,.gssb_c > tbody > tr > td,.gssb_d,.gssb_d > tbody > tr,.gssb_d > tbody > tr > td,.gssb_e,.gssb_e > tbody > tr,.gssb_e > tbody > tr > td{padding:0;margin:0;border:0}.gssb_a table,.gssb_a table tr,.gssb_a table tr td{padding:0;margin:0;border:0}</style><style type="text/css">.gscb_a{display:inline-block;font:27px/13px arial,sans-serif}.gsst_a .gscb_a{color:#a1b9ed;cursor:pointer}.gsst_a:hover .gscb_a,.gsst_a:focus .gscb_a{color:#36c}.gsst_a{display:inline-block}.gsst_a{cursor:pointer;padding:0 4px}.gsst_a:hover{text-decoration:none!important}.gsst_b{font-size:16px;padding:0 2px;position:relative;user-select:none;-webkit-user-select:none;white-space:nowrap}.gsst_e{vertical-align:middle;opacity:0.55;}.gsst_a:hover .gsst_e,.gsst_a:focus .gsst_e{opacity:0.72;}.gsst_a:active .gsst_e{opacity:1;}.gsst_f{background:white;text-align:left}.gsst_g{background-color:white;border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);margin:-1px -3px;padding:0 6px}.gsst_h{background-color:white;height:1px;margin-bottom:-1px;position:relative;top:-1px}.gsib_a{width:100%;padding:4px 6px 0}.gsib_a,.gsib_b{vertical-align:top}.gssb_c{border:0;position:absolute;z-index:989}.gssb_e{border:1px solid #ccc;border-top-color:#d9d9d9;box-shadow:0 2px 4px rgba(0,0,0,0.2);-webkit-box-shadow:0 2px 4px rgba(0,0,0,0.2);cursor:default}.gssb_f{visibility:hidden;white-space:nowrap}.gssb_k{border:0;display:block;position:absolute;top:0;z-index:988}.gsdd_a{border:none!important}.gsq_a{padding:0}.gssb_a{padding:0 7px}.gssb_a,.gssb_a td{white-space:nowrap;overflow:hidden;line-height:22px}#gssb_b{font-size:11px;color:#36c;text-decoration:none}#gssb_b:hover{font-size:11px;color:#36c;text-decoration:underline}.gssb_g{text-align:center;padding:8px 0 7px;position:relative}.gssb_h{font-size:15px;height:28px;margin:0.2em;-webkit-appearance:button}.gssb_i{background:#eee}.gss_ifl{visibility:hidden;padding-left:5px}.gssb_i .gss_ifl{visibility:visible}a.gssb_j{font-size:13px;color:#36c;text-decoration:none;line-height:100%}a.gssb_j:hover{text-decoration:underline}.gssb_l{height:1px;background-color:#e5e5e5}.gssb_m{color:#000;background:#fff}.gssb_a{padding:0 9px}.gsib_a{padding:5px 9px 4px 9px}.gscb_a{line-height:27px}.gssb_e{border:0}.gssb_l{margin:5px 0}input.gsc-input::-webkit-input-placeholder{font-size:14px}input.gsc-input:-moz-placeholder{font-size:14px}input.gsc-input::-moz-placeholder{font-size:14px}input.gsc-input:-ms-input-placeholder{font-size:14px}input.gsc-input:focus::-webkit-input-placeholder{color:transparent}input.gsc-input:focus:-moz-placeholder{color:transparent}input.gsc-input:focus::-moz-placeholder{color:transparent}input.gsc-input:focus:-ms-input-placeholder{color:transparent}.gssb_c .gsc-completion-container{position:static}.gssb_c{z-index:5000}.gsc-completion-container table{background:transparent;font-size:inherit;font-family:inherit}.gssb_c > tbody > tr,.gssb_c > tbody > tr > td,.gssb_d,.gssb_d > tbody > tr,.gssb_d > tbody > tr > td,.gssb_e,.gssb_e > tbody > tr,.gssb_e > tbody > tr > td{padding:0;margin:0;border:0}.gssb_a table,.gssb_a table tr,.gssb_a table tr td{padding:0;margin:0;border:0}</style><link rel="preload" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(10).txt" as="script"><script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(10).txt"></script><link rel="preload" href="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(11).txt" as="script"><script type="text/javascript" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/f(11).txt"></script></head>
+<body>
+<div class="header-wrapper">
+<div class="container">
+<header>
+<div class="header-top">
+<a class="search-toggle">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/search-grey-bold.svg">
+</a>
+<a class="logo" href="https://www.twblogs.net/">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/logo.png" data-loaded="true">
+<span>台部落</span>
+</a>
+<div class="meta-bar">
+<div id="google-search-bar">
+<div id="___gcse_0"><div class="gsc-control-cse gsc-control-cse-zh-TW"><div class="gsc-control-wrapper-cse" dir="ltr"><form class="gsc-search-box gsc-search-box-tools" accept-charset="utf-8"><table cellspacing="0" cellpadding="0" class="gsc-search-box"><tbody><tr><td class="gsc-input"><div class="gsc-input-box" id="gsc-iw-id1"><table cellspacing="0" cellpadding="0" id="gs_id50" class="gstl_50 gsc-input" style="width: 100%; padding: 0px;"><tbody><tr><td id="gs_tti50" class="gsib_a"><input autocomplete="off" type="text" size="10" class="gsc-input" name="search" title="搜尋" id="gsc-i-id1" dir="ltr" spellcheck="false" style="width: 100%; padding: 0px; border: none; margin: 0px; height: auto; outline: none;"></td><td class="gsib_b"><div class="gsst_b" id="gs_st50" dir="ltr"><a class="gsst_a" href="javascript:void(0)" title="清除搜尋框" role="button" style="display: none;"><span class="gscb_a" id="gs_cb50" aria-hidden="true">×</span></a></div></td></tr></tbody></table></div></td><td class="gsc-search-button"><button class="gsc-search-button gsc-search-button-v2"><svg width="13" height="13" viewBox="0 0 13 13"><title>搜尋</title><path d="m4.8495 7.8226c0.82666 0 1.5262-0.29146 2.0985-0.87438 0.57232-0.58292 0.86378-1.2877 0.87438-2.1144 0.010599-0.82666-0.28086-1.5262-0.87438-2.0985-0.59352-0.57232-1.293-0.86378-2.0985-0.87438-0.8055-0.010599-1.5103 0.28086-2.1144 0.87438-0.60414 0.59352-0.8956 1.293-0.87438 2.0985 0.021197 0.8055 0.31266 1.5103 0.87438 2.1144 0.56172 0.60414 1.2665 0.8956 2.1144 0.87438zm4.4695 0.2115 3.681 3.6819-1.259 1.284-3.6817-3.7 0.0019784-0.69479-0.090043-0.098846c-0.87973 0.76087-1.92 1.1413-3.1207 1.1413-1.3553 0-2.5025-0.46363-3.4417-1.3909s-1.4088-2.0686-1.4088-3.4239c0-1.3553 0.4696-2.4966 1.4088-3.4239 0.9392-0.92727 2.0864-1.3969 3.4417-1.4088 1.3553-0.011889 2.4906 0.45771 3.406 1.4088 0.9154 0.95107 1.379 2.0924 1.3909 3.4239 0 1.2126-0.38043 2.2588-1.1413 3.1385l0.098834 0.090049z"></path></svg></button></td><td class="gsc-clear-button"><div class="gsc-clear-button" title="清除結果">&nbsp;</div></td></tr></tbody></table></form><div class="gsc-results-wrapper-overlay"><div class="gsc-results-close-btn" tabindex="0"></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"><div aria-label="refinement" role="tab" class="gsc-tabHeader gsc-inline-block gsc-tabhActive">自訂搜尋</div><span class="gs-spacer"> </span></div></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"></div></div><div class="gsc-above-wrapper-area-invisible"><table cellspacing="0" cellpadding="0" class="gsc-above-wrapper-area-container"><tbody><tr><td class="gsc-result-info-container"><div class="gsc-result-info-invisible"></div></td><td class="gsc-orderby-container"><div class="gsc-orderby-invisible"><div class="gsc-orderby-label gsc-inline-block">排序依據：</div><div class="gsc-option-menu-container gsc-inline-block"><div class="gsc-selected-option-container gsc-inline-block"><div class="gsc-selected-option">Relevance</div><div class="gsc-option-selector"></div></div><div class="gsc-option-menu-invisible"><div class="gsc-option-menu-item gsc-option-menu-item-highlighted"><div class="gsc-option">Relevance</div></div><div class="gsc-option-menu-item"><div class="gsc-option">Date</div></div></div></div></div></td></tr></tbody></table></div><div class="gsc-adBlockInvisible"></div><div class="gsc-wrapper"><div class="gsc-adBlockInvisible"></div><div class="gsc-resultsbox-invisible"><div class="gsc-resultsRoot gsc-tabData gsc-tabdActive"><div><div class="gsc-expansionArea"></div></div></div></div></div></div><div class="gsc-modal-background-image" tabindex="0"></div></div></div></div>
+</div>
+<a href="https://www.twblogs.net/account/register?src=/" target="_blank" class="signup">註冊</a>
+<a class="login" href="https://www.twblogs.net/a/5b8b442e2b717718832e6baa#">登錄</a>
+<a href="https://www.twblogs.net/mp/postedit/" class="write-btn">
+寫文章
+</a>
+<a id="menu-icon">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/menu.svg">
+</a>
+</div>
+</div>
+</header>
+<div id="google-search-layer">
+<div id="___gcse_1"><div class="gsc-control-cse gsc-control-cse-zh-TW"><div class="gsc-control-wrapper-cse" dir="ltr"><form class="gsc-search-box gsc-search-box-tools" accept-charset="utf-8"><table cellspacing="0" cellpadding="0" class="gsc-search-box"><tbody><tr><td class="gsc-input"><div class="gsc-input-box" id="gsc-iw-id2"><table cellspacing="0" cellpadding="0" id="gs_id51" class="gstl_51 gsc-input" style="width: 100%; padding: 0px;"><tbody><tr><td id="gs_tti51" class="gsib_a"><input autocomplete="off" type="text" size="10" class="gsc-input" name="search" title="搜尋" id="gsc-i-id2" dir="ltr" spellcheck="false" style="width: 100%; padding: 0px; border: none; margin: 0px; height: auto; outline: none;"></td><td class="gsib_b"><div class="gsst_b" id="gs_st51" dir="ltr"><a class="gsst_a" href="javascript:void(0)" title="清除搜尋框" role="button" style="display: none;"><span class="gscb_a" id="gs_cb51" aria-hidden="true">×</span></a></div></td></tr></tbody></table></div></td><td class="gsc-search-button"><button class="gsc-search-button gsc-search-button-v2"><svg width="13" height="13" viewBox="0 0 13 13"><title>搜尋</title><path d="m4.8495 7.8226c0.82666 0 1.5262-0.29146 2.0985-0.87438 0.57232-0.58292 0.86378-1.2877 0.87438-2.1144 0.010599-0.82666-0.28086-1.5262-0.87438-2.0985-0.59352-0.57232-1.293-0.86378-2.0985-0.87438-0.8055-0.010599-1.5103 0.28086-2.1144 0.87438-0.60414 0.59352-0.8956 1.293-0.87438 2.0985 0.021197 0.8055 0.31266 1.5103 0.87438 2.1144 0.56172 0.60414 1.2665 0.8956 2.1144 0.87438zm4.4695 0.2115 3.681 3.6819-1.259 1.284-3.6817-3.7 0.0019784-0.69479-0.090043-0.098846c-0.87973 0.76087-1.92 1.1413-3.1207 1.1413-1.3553 0-2.5025-0.46363-3.4417-1.3909s-1.4088-2.0686-1.4088-3.4239c0-1.3553 0.4696-2.4966 1.4088-3.4239 0.9392-0.92727 2.0864-1.3969 3.4417-1.4088 1.3553-0.011889 2.4906 0.45771 3.406 1.4088 0.9154 0.95107 1.379 2.0924 1.3909 3.4239 0 1.2126-0.38043 2.2588-1.1413 3.1385l0.098834 0.090049z"></path></svg></button></td><td class="gsc-clear-button"><div class="gsc-clear-button" title="清除結果">&nbsp;</div></td></tr></tbody></table></form><div class="gsc-results-wrapper-overlay"><div class="gsc-results-close-btn" tabindex="0"></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"><div aria-label="refinement" role="tab" class="gsc-tabHeader gsc-inline-block gsc-tabhActive">自訂搜尋</div><span class="gs-spacer"> </span></div></div><div class="gsc-positioningWrapper"><div class="gsc-tabsAreaInvisible"></div></div><div class="gsc-above-wrapper-area-invisible"><table cellspacing="0" cellpadding="0" class="gsc-above-wrapper-area-container"><tbody><tr><td class="gsc-result-info-container"><div class="gsc-result-info-invisible"></div></td><td class="gsc-orderby-container"><div class="gsc-orderby-invisible"><div class="gsc-orderby-label gsc-inline-block">排序依據：</div><div class="gsc-option-menu-container gsc-inline-block"><div class="gsc-selected-option-container gsc-inline-block"><div class="gsc-selected-option">Relevance</div><div class="gsc-option-selector"></div></div><div class="gsc-option-menu-invisible"><div class="gsc-option-menu-item gsc-option-menu-item-highlighted"><div class="gsc-option">Relevance</div></div><div class="gsc-option-menu-item"><div class="gsc-option">Date</div></div></div></div></div></td></tr></tbody></table></div><div class="gsc-adBlockInvisible"></div><div class="gsc-wrapper"><div class="gsc-adBlockInvisible"></div><div class="gsc-resultsbox-invisible"><div class="gsc-resultsRoot gsc-tabData gsc-tabdActive"><div><div class="gsc-expansionArea"></div></div></div></div></div></div><div class="gsc-modal-background-image" tabindex="0"></div></div></div></div>
+</div>
+</div>
+</div>
+
+<div class="mobile-menu-background">
+</div>
+<div class="mobile-menu">
+<img class="mobile-menu-close" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/cross.svg">
+</div>
+
+<div id="login-layer-wrapper" class="overlay">
+<div class="login-layer">
+<img class="login-layer-close-button" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/cross.svg">
+<div class="user-form">
+<form id="login-form" action="https://www.twblogs.net/account/login?src=https://www.twblogs.net/a/5b8b442e2b717718832e6baa" method="post">
+<input type="hidden" name="_xsrf" value="2|22d9c6c9|74d41e0c832220433d8b95d9bcc9bf14|1600936705">
+<ul class="form-ul">
+<li>
+<input name="email" type="text" placeholder="電子郵件">
+</li>
+<li>
+<input name="passwd" type="password" value="" placeholder="請輸入密碼" autocomplete="off">
+</li>
+<li>
+<div class="err-info" style="display:none">請輸入正確的登錄賬號或密碼</div>
+</li>
+<li>
+<input type="submit" value="登录">
+</li>
+<li class="reg-link-container">
+<a href="https://www.twblogs.net/account/register?src=/" target="_blank" class="reg-link">註冊</a>
+</li>
+<li class="reg-link-container">
+<a href="https://www.twblogs.net/account/password_forgot/" target="_blank" class="reg-link">忘記密碼</a>
+</li>
+</ul>
+</form>
+</div>
+</div>
+</div>
+<script>
+(function() {
+var cx = 'partner-pub-2073744953016040:8541733644';
+var gcse = document.createElement('script');
+gcse.type = 'text/javascript';
+gcse.async = true;
+gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(gcse, s);
+})();
+</script>
+<div id="backTop" style="right: 1rem; display: none;"><i class="icon-up-open-1"></i></div>
+<div class="container" id="content-wrapper" style="height: auto !important;">
+<div id="toolbox">
+<ul style="position:fixed;">
+<li class="vote vote-up"><i class="icon-thumbs-up-alt" title=""></i></li>
+<li class="vote vote-down"><i class="icon-thumbs-down-alt" title=""></i></li>
+</ul>
+</div>
+<div class="content" style="height: auto !important;">
+<div class="main-content" style="height: auto !important;">
+<div class="article-wrapper" style="height: auto !important;">
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="https://www.twblogs.net/">首頁</a></li>
+<li class="breadcrumb-item"><a href="https://www.twblogs.net/c/5b820b6e2b71772165af5d73/">雙目</a></li>
+<li class="breadcrumb-item active" aria-current="page">正文</li>
+</ol>
+</nav>
+<h1>雙目視覺測距原理，數學推導及三維重建資源</h1>
+<div class="post-meta">
+<span class="original">原創</span>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg" data-loaded="true">
+<a href="https://www.twblogs.net/u/5b8b442e2b717718832e6ba4" target="_blank">cyem1</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg" data-loaded="true">
+<span> 2018-09-02 10:00 </span>
+</div>
+<div class="article-content" style="height: auto !important;">
+<p>轉載自：<a href="https://blog.csdn.net/piaoxuezhong/article/details/79016615" rel="nofollow" target="_blank">https://blog.csdn.net/piaoxuezhong/article/details/79016615</a></p>
+<h1>先說一下單/雙目的測距原理區別：</h1>
+<h1><a name="t1"></a><strong>單目測距原理：</strong></h1>
+<p>先通過圖像匹配進行目標識別（各種車型、行人、物體等），再通過目標在圖像中的大小去估算目標距離。這就要求在估算距離之前首先對目標進行準確識別，是汽車還是行人，是貨車、SUV還是小轎車。準確識別是準確估算距離的第一步。要做到這一點，就需要建立並不斷維護一個龐大的樣本特徵數據庫，保證這個數據庫包含待識別目標的全部特徵數據。比如在一些特殊地區，爲了專門檢測大型動物，必須先行建立大型動物的數據庫；而對於另外某些區域存在一些非常規車型，也要先將這些車型的特徵數據加入到數據庫中。如果缺乏待識別目標的特徵數據，就會導致系統無法對這些車型、物體、障礙物進行識別，從而也就無法準確估算這些目標的距離。</p>
+<p>&nbsp;</p>
+<h1><a name="t2"></a>單/雙目方案的優點與難點</h1>
+<p>從上面的介紹，<strong>單目系統的優勢</strong>在於成本較低，對計算資源的要求不高，系統結構相對簡單；<strong>缺點</strong>是：（1）需要不斷更新和維護一個龐大的樣本數據庫，才能保證系統達到較高的識別率；（2）無法對非標準障礙物進行判斷；（3）距離並非真正意義上的測量，準確度較低。</p>
+<h1><a name="t3"></a><strong>雙目檢測原理：</strong></h1>
+<p>通過對兩幅圖像視差的計算，直接對前方景物（圖像所拍攝到的範圍）進行距離測量，而無需判斷前方出現的是什麼類型的障礙物。所以對於任何類型的障礙物，都能根據距離信息的變化，進行必要的預警或制動。雙目攝像頭的原理與人眼相似。人眼能夠感知物體的遠近，是由於兩隻眼睛對同一個物體呈現的圖像存在差異，也稱“視差”。物體距離越遠，視差越小；反之，視差越大。視差的大小對應着物體與眼睛之間距離的遠近，這也是3D電影能夠使人有立體層次感知的原因。</p>
+<p>&nbsp;</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109101831618?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109101831618" data-loaded="true"></p>
+<p>上圖中的人和椰子樹，人在前，椰子樹在後，最下方是雙目相機中的成像。其中，右側相機成像中人在樹的左側，左側相機成像中人在樹的右側，這是因爲雙目的角度不一樣。再通過對比兩幅圖像就可以知道人眼觀察樹的時候視差小，而觀察人時視差大。因爲樹的距離遠，人的距離近。這就是雙目三角測距的原理。雙目系統對目標物體距離感知是一種絕對的測量，而非估算。</p>
+<h2><a name="t4"></a>理想雙目相機成像模型</h2>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109202525718?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109202525718" data-loaded="true"></p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109130121074?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109130121074" data-loaded="true"></p>
+<p>根據三角形相似定律：</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109203500511?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109203500511" data-loaded="true">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; （1）</p>
+<p>由式（1），解方程得：</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109203902490?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109203902490" data-loaded="true">&nbsp; &nbsp; &nbsp; &nbsp; （2）</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; z=b*f/d, x=z*xl/d, y=z*y/f &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; （3）</p>
+<p>根據上述推導，<strong>要求得空間點P離相機的距離（深度）z</strong>，必須知道：<br>
+1、相機焦距f，左右相機基線b（可以通過先驗信息或者相機標定得到）。<br>
+2、視差 ：<img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109204250788?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109204250788" data-loaded="true">，即左相機像素點(xl, yl)和右相機中對應點(xr, yr)的關係，這是雙目視覺的核心問題。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180110103853733?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180110103853733" data-loaded="true"></p>
+<p>重點來看一下視差（disparity），視差是同一個空間點在兩個相機成像中對應的x座標的差值，它可以通過編碼成灰度圖來反映出距離的遠近，離鏡頭越近的灰度越亮；</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180110104711573?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180110104711573" data-loaded="true"></p>
+<h2><a name="t5"></a>極線約束</h2>
+<p>對於左圖中的一個像素點，如何確定該點在右圖中的位置？需要在整個圖像中地毯式搜索嗎？當然不用，此時需要用到極線約束。<br>
+如上圖所示。O1，O2是兩個相機，P是空間中的一個點，P和兩個相機中心點O1、O2形成了三維空間中的一個平面PO1O2，稱爲極平面（Epipolar plane）。極平面和兩幅圖像相交於兩條直線，這兩條直線稱爲<strong>極線(Epipolar line)</strong>。</p>
+<p>P在相機O1中的成像點是P1，在相機O2中的成像點是P2，但是P的位置是未知的。我們的目標是：對於左圖的P1點，尋找它在右圖中的對應點P2，這樣就能確定P點的空間位置。<br><strong>極線約束（Epipolar Constraint）</strong>是指當空間點在兩幅圖像上分別成像時，已知左圖投影點p1，那麼對應右圖投影點p2一定在相對於p1的極線上，這樣可以極大的縮小匹配範圍。即P2一定在對應極線上，所以只需要沿着極線搜索便可以找到P1的對應點P2。</p>
+<h2><a name="t6"></a>非理性情況：</h2>
+<p>上面是兩相機共面且光軸平行，參數相同的理想情況，當相機O1，O2不是在同一直線上怎麼辦呢？事實上，這種情況非常常見，因爲有些場景下兩個相機需要獨立固定，很難保證光心完全水平，即使固定在同一個基板上也會由於裝配的原因導致光心不完全水平，如下圖所示：兩個相機的極線不平行，並且不共面。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109130506440?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109130506440" data-loaded="true"></p>
+<p>這種情況下拍攝的兩張左右圖片，如下圖所示。左圖中三個十字標誌的點，右圖中對應的極線是右圖中的三條白色直線，也就是對應的搜索區域。我們看到這三條直線並不是水平的，如果進行逐點搜索效率非常低。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109130819436?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109130819436" data-loaded="true"></p>
+<h2><a name="t7"></a>圖像矯正技術</h2>
+<p>圖像矯正是通過分別對兩張圖片用單應性矩陣（homography matrix）變換得到，目的是把兩個不同方向的圖像平面（下圖中灰色平面）重新投影到同一個平面且光軸互相平行（下圖中黃色平面），這樣轉化爲理想情況的模型。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109130653942?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109130653942" data-loaded="true"></p>
+<p>經過圖像矯正後，左圖中的像素點只需要沿着水平的極線方向搜索對應點就可以了。從下圖中我們可以看到三個點對應的視差（紅色雙箭頭線段）是不同的，越遠的物體視差越小，越近的物體視差越大。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109130913869?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109130913869" data-loaded="true"></p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180109224858677?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180109224858677" data-loaded="true"></p>
+<p>上面的主要工作是在極線上尋找匹配點，但是由於要保證兩個相機參數完全一致是不現實的，並且外界光照變化和視角不同的影響，使得單個像素點魯棒性很差。所以匹配工作是一項很重要的事情，這也關係着雙目視覺測距的準確性。</p>
+<h1><a name="t8"></a>雙目視覺的工作流程</h1>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180110105311156?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180110105311156" data-loaded="true"></p>
+<p><a href="http://blog.csdn.net/piaoxuezhong/article/details/75268535" rel="nofollow" target="_blank">相機鏡頭畸變校正原理及方法</a>，之前介紹過，這個基本是通用的，可以用張正友校準法。</p>
+<p>&nbsp;</p>
+<h1><a name="t9"></a>雙目測距的優點與難點</h1>
+<p>從上面的介紹看出，<strong>雙目系統優勢：</strong>（1）成本比單目系統要高，但尚處於可接受範圍內，並且與激光雷達等方案相比成本較低；（2）沒有識別率的限制，因爲從原理上無需先進行識別再進行測算，而是對所有障礙物直接進行測量；（3）直接利用視差計算距離，精度比單目高；（4）無需維護樣本數據庫，因爲對於雙目沒有樣本的概念。</p>
+<p>&nbsp;</p>
+<p><strong>雙目系統的難點</strong>：</p>
+<p>（1）計算量非常大，對計算單元的性能要求非常高，這使得雙目系統的產品化、小型化的難度較大。所以在芯片或FPGA上解決雙目的計算問題難度比較大。國際上使用雙目的研究機構或廠商，絕大多數是使用服務器進行圖像處理與計算，也有部分將算法進行簡化後，使用FPGA進行處理。</p>
+<p>（2）雙目的配準效果，直接影響到測距的準確性。</p>
+<p>2.1、對環境光照非常敏感。雙目立體視覺法依賴環境中的自然光線採集圖像，而由於光照角度變化、光照強度變化等環境因素的影響，拍攝的兩張圖片亮度差別會比較大，這會對匹配算法提出很大的挑戰。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180110112507683?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180110112507683" data-loaded="true"></p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180110112525720?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180110112525720" data-loaded="true"></p>
+<p>2.2、不適用於單調缺乏紋理的場景。由於雙目立體視覺法根據視覺特徵進行圖像匹配，所以對於缺乏視覺特徵的場景（如天空、白牆、沙漠等）會出現匹配困難，導致匹配誤差較大甚至匹配失敗。</p>
+<p><img alt="" class="has lazyload" referrerpolicy="no-referrer" data-original="https://pic1.xuehuaimg.com/proxy/csdn/https://img-blog.csdn.net/20180110112551527?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcGlhb3h1ZXpob25n/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/20180110112551527" data-loaded="true"></p>
+<p>2.3、計算複雜度高。該方法需要逐像素匹配；又因爲上述多種因素的影響，爲保證匹配結果的魯棒性，需要在算法中增加大量的錯誤剔除策略，因此對算法要求較高，想要實現可靠商用難度大，計算量較大。<br>
+2.4、相機基線限制了測量範圍。測量範圍和基線（兩個攝像頭間距）關係很大：基線越大，測量範圍越遠；基線越小，測量範圍越近。所以基線在一定程度上限制了該深度相機的測量範圍。</p>
+<p>&nbsp;</p>
+<p>---------------項目開源：-----------</p>
+<p><a href="http://vision.middlebury.edu/stereo/" rel="nofollow" target="_blank">卡內基梅隆大學<em>雙目</em>實驗室</a></p>
+<p>Oxford大牛：Andrew Zisserman，<a href="http://www.robots.ox.ac.uk/~vgg/hzbook/code/" rel="nofollow" target="_blank">http://www.robots.ox.ac.uk/~vgg/hzbook/code/</a>，主要研究多幅圖像的幾何學，該網站提供了部分工具，相當實用，還有例子</p>
+<p>Cambridge：<a href="http://mi.eng.cam.ac.uk/milab.html" rel="nofollow" target="_blank">http://mi.eng.cam.ac.uk/milab.html</a>，劍橋大學的機器智能實驗室，裏面有三個小組，Computer Vision &amp; Robotics, Machine Intelligence, Speech</p><div class="google-auto-placed ap_container" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-2073744953016040" data-adsbygoogle-status="done" style="display: block; margin: auto; background-color: transparent; height: 280px; overflow: hidden;"><ins id="aswift_3_expand" style="display:inline-table;border:none;height:280px;margin:0;padding:0;position:relative;visibility:visible;width:872px;background-color:transparent;"><ins id="aswift_3_anchor" style="display: block; border: none; height: 280px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 872px; background-color: transparent; overflow: visible;"><iframe id="aswift_3" name="aswift_3" style="left:0;position:absolute;top:0;border:0;width:872px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="872" height="280" frameborder="0" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/ads.html" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" data-google-container-id="a!3" data-google-query-id="CIC1mf6xgewCFZUD4Aod6v0IAg" data-load-complete="true"></iframe></ins></ins></ins></div>
+<p>stanford：<a href="http://ai.stanford.edu/~asaxena/reconstruction3d/" rel="nofollow" target="_blank">http://ai.stanford.edu/~asaxena/reconstruction3d/</a>，主要對於單張照片的三維重建</p><div class="google-auto-placed ap_container" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-2073744953016040" data-adsbygoogle-status="done" style="display: block; margin: auto; background-color: transparent; height: 280px; overflow: hidden;"><ins id="aswift_4_expand" style="display:inline-table;border:none;height:280px;margin:0;padding:0;position:relative;visibility:visible;width:872px;background-color:transparent;"><ins id="aswift_4_anchor" style="display: block; border: none; height: 280px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 872px; background-color: transparent; overflow: visible;"><iframe id="aswift_4" name="aswift_4" style="left:0;position:absolute;top:0;border:0;width:872px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="872" height="280" frameborder="0" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/ads(1).html" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" data-google-container-id="a!4" data-google-query-id="CPPxmf6xgewCFYi63godPagIKg" data-load-complete="true"></iframe></ins></ins></ins></div>
+<p>caltech：<a href="http://www.vision.caltech.edu/bouguetj/calib_doc/" rel="nofollow" target="_blank">http://www.vision.caltech.edu/bouguetj/calib_doc/</a>，這是我們Computer Vision老師課件上的連接，主要是用於攝像機標定的工具集，當然也有涉及對標定圖像三維重建的前期處理過程</p>
+<p>JP Tarel：<a href="http://perso.lcpc.fr/tarel.jean-philippe/" rel="nofollow" target="_blank">http://perso.lcpc.fr/tarel.jean-philippe/</a>，個人主頁</p>
+<p>&nbsp;</p>
+<p>------------匹配與3D重建算法：-----------</p>
+<p>&nbsp;</p>
+<p>https://www.cnblogs.com/polly333/p/5130375.html</p>
+<p>http://blog.csdn.net/wangyaninglm/article/details/51533549</p>
+<p>http://blog.csdn.net/wangyaninglm/article/details/51531333</p>
+<p>&nbsp;</p>
+<p>https://www.zhihu.com/question/29885222?sort=created</p>
+<p>http://blog.csdn.net/wangyaninglm/article/details/51558656</p>
+<p>http://blog.csdn.net/wangyaninglm/article/details/51558310</p>
+<p>https://www.cnblogs.com/mysunnyday/archive/2011/05/09/2041115.html</p>
+</div>
+<div class="ads-article-bottom-match">
+<ins class="adsbygoogle" style="display: block; height: 436px; overflow: hidden;" data-ad-format="autorelaxed" data-ad-client="ca-pub-2073744953016040" data-ad-slot="3534050590" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:436px;margin:0;padding:0;position:relative;visibility:visible;width:872px;background-color:transparent;"><ins id="aswift_0_anchor" style="display:block;border:none;height:436px;margin:0;padding:0;position:relative;visibility:visible;width:872px;background-color:transparent;"><iframe id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;border:0;width:872px;height:436px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="872" height="436" frameborder="0" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/ads(2).html" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" data-google-container-id="a!1" data-google-query-id="CJC5kZOygewCFTnAEQgderwGsQ" data-load-complete="true"></iframe></ins></ins></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+<ul class="tag-list">
+</ul>
+<div id="comment-form-wrapper">
+<div class="section-head">發表評論</div>
+<form id="comment-form" class="comment-form" action="https://www.twblogs.net/account/register" method="post">
+<input type="hidden" name="_xsrf" value="2|22d9c6c9|74d41e0c832220433d8b95d9bcc9bf14|1600936705">
+<input name="post_id" value="5b8b442e2b717718832e6baa" class="hidden">
+<textarea autocomplete="off" rows="2" cols="50" placeholder="登錄以後才評論..." disabled=""></textarea>
+<a class="login" href="https://www.twblogs.net/a/5b8b442e2b717718832e6baa#">登录</a>
+</form>
+</div>
+<div id="article-comments">
+<div class="section-head">所有評論</div>
+<div id="comment-list">
+還沒有人評論，想成為第一個評論的人麼? 請在上方評論欄輸入並且點擊發布.
+</div>
+</div>
+<div class="related-post-list">
+<div class="section-head">相關文章</div>
+<div class="related-posts">
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5eedbb7c7301656afddabb7b" target="_blank" title="示例程序:關於雙目視覺,標定,立體匹配(視差算法),點雲,雙目三維重建的原理以及代碼">
+示例程序:關於雙目視覺,標定,立體匹配(視差算法),點雲,雙目三維重建的原理以及代碼
+</a>
+</h4>
+<p class="post-excerpt">
+<a href="https://www.twblogs.net/a/5eedbb7c7301656afddabb7b" target="_blank" title="示例程序:關於雙目視覺,標定,立體匹配(視差算法),點雲,雙目三維重建的原理以及代碼">
+Evision雙目視覺關於雙目視覺的一些總結說明前言相機模型標定視差算法:立體匹配測量,三維重建示例程序參考文獻
+關於雙目視覺的一些總結
+說明
+如果讀者對於本文或者Evision程序有任何問題,請儘量通過github的issue向
+</a>
+</p>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg" data-loaded="true">
+<a href="https://www.twblogs.net/u/5b8cd4fe2b7177188335f308">安娜学姐</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg" data-loaded="true">
+<span>2020-06-20 15:32:11</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5ee82c51ab95e1fe834d2202" target="_blank" title="論文閱讀筆記——StereoNet: Guided Hierarchical Renement for Real-Time Edge-Aware Depth Prediction">
+論文閱讀筆記——StereoNet: Guided Hierarchical Renement for Real-Time Edge-Aware Depth Prediction
+</a>
+</h4>
+<p class="post-excerpt">
+<a href="https://www.twblogs.net/a/5ee82c51ab95e1fe834d2202" target="_blank" title="論文閱讀筆記——StereoNet: Guided Hierarchical Renement for Real-Time Edge-Aware Depth Prediction">
+引言：
+谷歌實時端到端雙目系統深度學習網絡
+雙目匹配可以得到環境中的三維深度信息，進而爲機器人，無人車，VR等現實場景下的應用提供有力信息，在對安全驗證比較高的人臉支付領域，三維人臉驗證也正在逐漸取代安全性較低的二維人臉驗證。近年來，深度
+</a>
+</p>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg" data-loaded="true">
+<a href="https://www.twblogs.net/u/5d700a0cbd9eee541c33ec5b">www.flybird.xyz</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg" data-loaded="true">
+<span>2020-06-16 10:20:01</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5e9572d5bd9eee34b83ec1fb" target="_blank" title="cv2雙目調試總結">
+cv2雙目調試總結
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8320272b717766a1eb264f">太白醉客</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2020-04-14 16:22:45</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5e9572d5bd9eee3420903c4d" target="_blank" title="基於cv2x OSD視頻輸出分析">
+基於cv2x OSD視頻輸出分析
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8320272b717766a1eb264f">太白醉客</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2020-04-14 16:22:45</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5e9572d5bd9eee3420903c4a" target="_blank" title="OSD視頻輸出分析">
+OSD視頻輸出分析
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8320272b717766a1eb264f">太白醉客</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2020-04-14 16:22:45</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5e6117c4bd9eee2117c6d568" target="_blank" title="sdk開發環境搭建">
+sdk開發環境搭建
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8320272b717766a1eb264f">太白醉客</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2020-03-05 23:16:20</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5e5bc47ebd9eee21168550a8" target="_blank" title="Patch Match Stereo文獻+代碼">
+Patch Match Stereo文獻+代碼
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5e5bc47ebd9eee2116855093">hhhliuye</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2020-03-01 22:19:42</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5db35b2fbd9eee310ee68630" target="_blank" title="論文閱讀筆記——Group-wise Correlation Stereo Network">
+論文閱讀筆記——Group-wise Correlation Stereo Network
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5d700a0cbd9eee541c33ec5b">www.flybird.xyz</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2019-10-26 04:29:35</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5d66da24bd9eee541c336201" target="_blank" title="論文閱讀筆記——Stereo R-CNN based 3D Object Detection for Autonomous Driving">
+論文閱讀筆記——Stereo R-CNN based 3D Object Detection for Autonomous Driving
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8473d52b71775d1cd0cacf">alex_lhx</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2019-08-29 03:46:44</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5bddbda62b717720b51abece" target="_blank" title="Stereo Matching文獻筆記之（八）：《On Building an Accurate Stereo Matching System on Graphics Hardware》讀後感">
+Stereo Matching文獻筆記之（八）：《On Building an Accurate Stereo Matching System on Graphics Hardware》讀後感
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b99bc132b717757338fff9e">右手边的蓝天</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2018-11-03 23:24:22</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5b920a3a2b71772002d257bd" target="_blank" title="openGL在VS2013中使用">
+openGL在VS2013中使用
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8a7f882b71775d1ce7632a">金木2</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2018-09-07 13:18:50</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5b8ee1e12b71771883487639" target="_blank" title="雙目視覺算法學習（一）：雙目定標">
+雙目視覺算法學習（一）：雙目定標
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8ee1df2b71771883487628">雅可</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2018-09-05 03:49:53</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5b8b44322b717718832e6bcc" target="_blank" title="雙目立體匹配流程詳解">
+雙目立體匹配流程詳解
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8b442e2b717718832e6ba4">cyem1</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2018-09-02 10:00:18</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5b8b44302b717718832e6bb8" target="_blank" title="Stereo Matching文獻筆記之（一）：《On Building an Accurate Stereo Matching System on Graphics Hardware》讀後感">
+Stereo Matching文獻筆記之（一）：《On Building an Accurate Stereo Matching System on Graphics Hardware》讀後感
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8b442e2b717718832e6ba4">cyem1</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2018-09-02 10:00:16</span>
+</div>
+</div>
+<div class="list-item">
+<h4 class="list-item-title">
+<a href="https://www.twblogs.net/a/5b8b442f2b717718832e6bb1" target="_blank" title="雙目測距數學原理詳解">
+雙目測距數學原理詳解
+</a>
+</h4>
+<div class="post-meta">
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/user.svg">
+<a href="https://www.twblogs.net/u/5b8b442e2b717718832e6ba4">cyem1</a>
+<img src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/clock.svg">
+<span>2018-09-02 10:00:15</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="secondary-content feed" style="">
+<div class="sidebar author-info">
+<a href="https://www.twblogs.net/u/5b8b442e2b717718832e6ba4" target="_blank">
+<span id="user-icon">
+C
+</span>
+cyem1
+</a>
+</div>
+<div class="right_sidebar">
+<div>
+<div class="section-head">
+24小時熱門文章
+</div>
+<div>
+<section class="section-item">
+<ul>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6b13000e293e5d0ef269ca" target="_blank" class="news-link">
+今天有支股票脫單
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6c33030e293e5d0ef27b72" target="_blank" class="news-link">
+程序員賺外快的好用網站
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6b083647b134b550a44ede" target="_blank" class="news-link">
+小蔥拌豆腐防結石
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6bb4380e293e5d0ef27436" target="_blank" class="news-link">
+新概念英語三lesson45知識筆記
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6c35f376685a85343231ac" target="_blank" class="news-link">
+上古神器Gvim--從入門到精通
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6bb47f6ce5e328c22fe7ec" target="_blank" class="news-link">
+學了什麼？
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6b0ef06ce5e328c22fdd51" target="_blank" class="news-link">
+李嘉欣嫁給許晉亨，原來截了她的胡
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6b475c76685a8534322470" target="_blank" class="news-link">
+眼兒媚庚子秋分
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6b074447b134b550a44ed2" target="_blank" class="news-link">
+《你只管紮根生長，剩下的交給時間》
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5f6b074e6d0a0307f82e53de" target="_blank" class="news-link">
+《境緣無好醜，好醜在於心》
+</a>
+</h5>
+</li>
+</ul>
+</section>
+</div>
+</div>
+</div>
+<div class="right_sidebar" style="height: auto !important;">
+<ins class="adsbygoogle" style="display: block; height: 600px; overflow: hidden;" data-ad-client="ca-pub-2073744953016040" data-ad-slot="3358264730" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done"><ins id="aswift_1_expand" style="display:inline-table;border:none;height:600px;margin:0;padding:0;position:relative;visibility:visible;width:272px;background-color:transparent;"><ins id="aswift_1_anchor" style="display: block; border: none; height: 600px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 272px; background-color: transparent; overflow: visible;"><iframe id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;border:0;width:272px;height:600px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="272" height="600" frameborder="0" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/ads(3).html" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" data-google-container-id="a!2" data-google-query-id="CMrw-v2xgewCFYq0lgod7OgBuA" data-load-complete="true"></iframe></ins></ins></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+<div class="google-auto-placed" style="width: 300px; height: 250px; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-2073744953016040" data-adsbygoogle-status="done" style="display: block; margin: 10px auto 8px; background-color: transparent; height: 250px; width: 300px; overflow: hidden;"><ins id="aswift_5_expand" style="display: inline-table; border: none; height: 250px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 300px; background-color: transparent;"><ins id="aswift_5_anchor" style="display: block; border: none; height: 250px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 300px; background-color: transparent; overflow: hidden;"><iframe id="aswift_5" name="aswift_5" style="left: 0px; position: absolute; top: 0px; border: 0px; width: 300px; height: 250px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="300" height="250" frameborder="0" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/ads(4).html" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" data-google-container-id="a!5" data-google-query-id="CLODkf6xgewCFQ5K4Aod6yAHhQ" data-load-complete="true"></iframe></ins></ins></ins></div><div class="right_sidebar">
+<div>
+<div class="section-head">
+最新文章
+</div>
+<div>
+<section class="section-item">
+<ul>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5b8b44322b717718832e6bcc" target="_blank" class="news-link">
+雙目立體匹配流程詳解
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5b8b44312b717718832e6bc3" target="_blank" class="news-link">
+使用opencv做雙目測距（相機標定+立體匹配+測距）.
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5b8b44312b717718832e6bbd" target="_blank" class="news-link">
+雙目相機標定以及立體測距原理及OpenCV實現
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5b8b44312b717718832e6bbc" target="_blank" class="news-link">
+計算機視覺新手入門：大佬推薦我這樣學習
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5b8b44312b717718832e6bbb" target="_blank" class="news-link">
+OpenCV單目攝像頭標定
+</a>
+</h5>
+</li>
+</ul>
+</section>
+</div>
+</div>
+</div>
+<div class="right_sidebar">
+<div>
+<div class="section-head">
+最新評論文章
+</div>
+<div>
+<section class="section-item">
+<ul>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5b8bef152b717718832f2bdb" target="_blank" class="news-link">
+SSRS 2017實現匿名訪問
+</a>
+</h5>
+</li>
+<li>
+<h5>
+<a href="https://www.twblogs.net/a/5c7c0f49bd9eee31cea5f78a" target="_blank" class="news-link">
+Android .apk逆向工程（安裝篇）：Windows下Apktool安裝，下載以及使用
+</a>
+</h5>
+</li>
+</ul>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-body">
+<img src="https://www.twblogs.net/a/5b8b442e2b717718832e6baa" class="img-responsive">
+</div>
+</div>
+</div>
+</div>
+<footer>
+</footer>
+</div>
+<script>
+var post_id = "5b8b442e2b717718832e6baa";
+
+var token = getCookie('_xsrf');
+</script>
+<script>
+$.ajax({
+url: '/views',
+headers: {'X-XSRFToken' : token },
+data: {post_id: post_id },
+type: "POST",
+});
+</script>
+<script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/custom_fix.js.下載"></script>
+<script>
+$(document).ready(function() {
+$('pre code').each(function(i, block) {
+hljs.highlightBlock(block);
+});
+});
+</script>
+<script src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/load_comments.js.下載"></script>
+<script>
+$(".article-content img").click(
+function() {
+let width;
+let img_src = $(this).attr('src');
+let img_width = this.naturalWidth;
+// let height = this.naturalHeight;
+let window_width = $(window).width() * 0.8;
+console.log(img_width,window_width)
+if (img_width <= window_width) {
+$("#myModal").addClass('modal-small')
+width = img_width;
+} else {
+$("#myModal").addClass('modal-big')
+width = window_width;
+}
+$("#myModal img").attr('src',img_src);
+$("#myModal .modal-dialog img").css('width',width);
+$("#myModal .modal-dialog img").css('height','auto');
+$('#myModal').modal('show');
+}
+)
+$('#myModal').click(
+function() {
+$('#myModal').modal('hide')
+}
+)
+const observer = lozad('img', {
+load: function(el) {
+const src = el.getAttribute('data-original')
+if (src) {
+el.src = src;
+}
+}
+});
+observer.observe();
+</script>
+<style>
+.modal-big .modal-dialog {
+position: relative;
+display: table;
+overflow-y: auto;
+overflow-x: auto;
+width: auto;
+}
+.modal-big .modal.show .modal-dialog {
+top: 50%;
+transform: translateY(-50%);
+}
+.modal-big .modal-body {
+text-align: center;
+}
+.modal-small.modal {
+text-align: center;
+padding: 0!important;
+}
+.modal-small.modal:before {
+content: '';
+display: inline-block;
+height: 100%;
+vertical-align: middle;
+margin-right: -4px;
+}
+.modal-small .modal-dialog {
+display: inline-block;
+text-align: left;
+vertical-align: middle;
+max-width: 100%;
+}
+.modal-content {
+cursor: zoom-out;
+}
+</style>
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-adsbygoogle-status="done" style="display: none !important; overflow: hidden;"><ins id="aswift_2_expand" style="display:inline-table;border:none;height:0px;margin:0;padding:0;position:relative;visibility:visible;width:0px;background-color:transparent;"><ins id="aswift_2_anchor" style="display:block;border:none;height:0px;margin:0;padding:0;position:relative;visibility:visible;width:0px;background-color:transparent;"><iframe id="aswift_2" name="aswift_2" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/ads(5).html" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" data-google-container-id="a!2" data-load-complete="true"></iframe></ins></ins></ins><table cellspacing="0" cellpadding="0" class="gstl_50 gssb_c" style="width: 220px; display: none; top: 45px; left: 937px; position: absolute;"><tbody><tr><td class="gssb_f"></td><td class="gssb_e" style="width: 100%;"></td></tr></tbody></table><table cellspacing="0" cellpadding="0" class="gstl_51 gssb_c" style="width: 2px; display: none; top: 3px; left: -1px; position: absolute;"><tbody><tr><td class="gssb_f"></td><td class="gssb_e" style="width: 100%;"></td></tr></tbody></table><iframe id="google_osd_static_frame_9063213118808" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/saved_resource(4).html"></iframe></body><iframe id="google_esf" name="google_esf" src="./雙目視覺測距原理，數學推導及三維重建資源 - 台部落_files/zrt_lookup.html" data-ad-client="ca-pub-2073744953016040" style="display: none;"></iframe></html>
